@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:offs/config/routes/app_router.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -7,7 +8,21 @@ class DashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Dashboard')),
-      body: const Center(child: Text('Welcome to Offs')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('Welcome to Offs'),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRouter.tasks);
+              },
+              child: const Text('Go to Tasks'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -78,8 +78,14 @@ The final product will be a production-ready Flutter application that guarantees
 *   Remote Inspectors
 
 ## Next Steps
-1.  **Data Layer Implementation**: Implement `TaskRepository`, `TaskLocalDataSource` (Drift DAO), and `TaskRemoteDataSource`.
-2.  **State Management**: Create BLoCs for Tasks feature.
-3.  **UI Implementation**: Build Task list and detail screens.
-4.  **Inventory Feature**: Implement domain, data, and presentation layers for Inventory.
-5.  **Sync Mechanism**: Implement the background sync logic using `WorkManager` and `SyncQueue`.
+1.  **Inventory Feature**: Implement domain, data, and presentation layers for Inventory.
+2.  **Sync Mechanism**: Implement the background sync logic using `WorkManager` and `SyncQueue`.
+3.  **Testing**: Add unit and widget tests.
+
+## Completed
+- **Project Setup**: Architecture, Dependencies, Database, DI.
+- **Tasks Feature**:
+  - Domain: Entities, Use Cases, Repository Interface.
+  - Data: Local DataSource (Drift DAO), Remote DataSource (Stub), Repository Implementation, Models.
+  - Presentation: BLoC, Task List Page, Task Detail Page, Task Card.
+  - **Offline Support**: Tasks are saved locally and queued for sync.

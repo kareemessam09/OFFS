@@ -3,7 +3,7 @@
 part of 'database.dart';
 
 // ignore_for_file: type=lint
-class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
+class $TasksTable extends Tasks with TableInfo<$TasksTable, TaskData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -107,7 +107,7 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
   static const String $name = 'tasks';
   @override
   VerificationContext validateIntegrity(
-    Insertable<Task> instance, {
+    Insertable<TaskData> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -162,9 +162,9 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Task map(Map<String, dynamic> data, {String? tablePrefix}) {
+  TaskData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Task(
+    return TaskData(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -202,7 +202,7 @@ class $TasksTable extends Tasks with TableInfo<$TasksTable, Task> {
   }
 }
 
-class Task extends DataClass implements Insertable<Task> {
+class TaskData extends DataClass implements Insertable<TaskData> {
   final int id;
   final String title;
   final String? description;
@@ -210,7 +210,7 @@ class Task extends DataClass implements Insertable<Task> {
   final DateTime? dueDate;
   final DateTime createdAt;
   final DateTime updatedAt;
-  const Task({
+  const TaskData({
     required this.id,
     required this.title,
     this.description,
@@ -252,12 +252,12 @@ class Task extends DataClass implements Insertable<Task> {
     );
   }
 
-  factory Task.fromJson(
+  factory TaskData.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Task(
+    return TaskData(
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String?>(json['description']),
@@ -281,7 +281,7 @@ class Task extends DataClass implements Insertable<Task> {
     };
   }
 
-  Task copyWith({
+  TaskData copyWith({
     int? id,
     String? title,
     Value<String?> description = const Value.absent(),
@@ -289,7 +289,7 @@ class Task extends DataClass implements Insertable<Task> {
     Value<DateTime?> dueDate = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
-  }) => Task(
+  }) => TaskData(
     id: id ?? this.id,
     title: title ?? this.title,
     description: description.present ? description.value : this.description,
@@ -298,8 +298,8 @@ class Task extends DataClass implements Insertable<Task> {
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
-  Task copyWithCompanion(TasksCompanion data) {
-    return Task(
+  TaskData copyWithCompanion(TasksCompanion data) {
+    return TaskData(
       id: data.id.present ? data.id.value : this.id,
       title: data.title.present ? data.title.value : this.title,
       description: data.description.present
@@ -314,7 +314,7 @@ class Task extends DataClass implements Insertable<Task> {
 
   @override
   String toString() {
-    return (StringBuffer('Task(')
+    return (StringBuffer('TaskData(')
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
@@ -339,7 +339,7 @@ class Task extends DataClass implements Insertable<Task> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is Task &&
+      (other is TaskData &&
           other.id == this.id &&
           other.title == this.title &&
           other.description == this.description &&
@@ -349,7 +349,7 @@ class Task extends DataClass implements Insertable<Task> {
           other.updatedAt == this.updatedAt);
 }
 
-class TasksCompanion extends UpdateCompanion<Task> {
+class TasksCompanion extends UpdateCompanion<TaskData> {
   final Value<int> id;
   final Value<String> title;
   final Value<String?> description;
@@ -375,7 +375,7 @@ class TasksCompanion extends UpdateCompanion<Task> {
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
   }) : title = Value(title);
-  static Insertable<Task> custom({
+  static Insertable<TaskData> custom({
     Expression<int>? id,
     Expression<String>? title,
     Expression<String>? description,
@@ -1714,6 +1714,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $InventoryItemsTable inventoryItems = $InventoryItemsTable(this);
   late final $SyncQueueTable syncQueue = $SyncQueueTable(this);
   late final $AttachmentsTable attachments = $AttachmentsTable(this);
+  late final TasksDao tasksDao = TasksDao(this as AppDatabase);
+  late final SyncQueueDao syncQueueDao = SyncQueueDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1874,14 +1876,14 @@ class $$TasksTableTableManager
         RootTableManager<
           _$AppDatabase,
           $TasksTable,
-          Task,
+          TaskData,
           $$TasksTableFilterComposer,
           $$TasksTableOrderingComposer,
           $$TasksTableAnnotationComposer,
           $$TasksTableCreateCompanionBuilder,
           $$TasksTableUpdateCompanionBuilder,
-          (Task, BaseReferences<_$AppDatabase, $TasksTable, Task>),
-          Task,
+          (TaskData, BaseReferences<_$AppDatabase, $TasksTable, TaskData>),
+          TaskData,
           PrefetchHooks Function()
         > {
   $$TasksTableTableManager(_$AppDatabase db, $TasksTable table)
@@ -1943,14 +1945,14 @@ typedef $$TasksTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
       $TasksTable,
-      Task,
+      TaskData,
       $$TasksTableFilterComposer,
       $$TasksTableOrderingComposer,
       $$TasksTableAnnotationComposer,
       $$TasksTableCreateCompanionBuilder,
       $$TasksTableUpdateCompanionBuilder,
-      (Task, BaseReferences<_$AppDatabase, $TasksTable, Task>),
-      Task,
+      (TaskData, BaseReferences<_$AppDatabase, $TasksTable, TaskData>),
+      TaskData,
       PrefetchHooks Function()
     >;
 typedef $$InventoryItemsTableCreateCompanionBuilder =

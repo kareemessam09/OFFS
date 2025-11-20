@@ -8,10 +8,15 @@ import 'tables/tasks_table.dart';
 import 'tables/inventory_table.dart';
 import 'tables/sync_queue_table.dart';
 import 'tables/attachments_table.dart';
+import 'daos/tasks_dao.dart';
+import 'daos/sync_queue_dao.dart';
 
 part 'database.g.dart';
 
-@DriftDatabase(tables: [Tasks, InventoryItems, SyncQueue, Attachments])
+@DriftDatabase(
+  tables: [Tasks, InventoryItems, SyncQueue, Attachments],
+  daos: [TasksDao, SyncQueueDao],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 

@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 
+@DataClassName('SyncQueueData')
 class SyncQueue extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get operation => text()(); // 'create', 'update', 'delete'
