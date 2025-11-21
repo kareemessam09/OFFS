@@ -28,6 +28,8 @@ import '../../features/inventory/domain/usecases/get_inventory_item_by_sku.dart'
 import '../../features/inventory/domain/usecases/search_inventory.dart'
     as _i869;
 import '../../features/inventory/domain/usecases/update_quantity.dart' as _i242;
+import '../../features/inventory/presentation/bloc/inventory_bloc.dart'
+    as _i690;
 import '../../features/tasks/data/datasources/task_local_datasource.dart'
     as _i123;
 import '../../features/tasks/data/datasources/task_remote_datasource.dart'
@@ -93,6 +95,7 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i716.InventoryLocalDataSource>(),
         gh<_i103.InventoryRemoteDataSource>(),
         gh<_i932.NetworkInfo>(),
+        gh<_i428.SyncQueueDao>(),
       ),
     );
     gh.lazySingleton<_i840.DeleteTask>(
@@ -118,6 +121,13 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i313.GetInventory>(
       () => _i313.GetInventory(gh<_i422.InventoryRepository>()),
+    );
+    gh.factory<_i690.InventoryBloc>(
+      () => _i690.InventoryBloc(
+        gh<_i313.GetInventory>(),
+        gh<_i869.SearchInventory>(),
+        gh<_i242.UpdateQuantity>(),
+      ),
     );
     gh.factory<_i841.TaskBloc>(
       () => _i841.TaskBloc(

@@ -1,5 +1,10 @@
+import 'dart:convert';
+
+import 'package:drift/drift.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
+import 'package:offs/core/database/daos/sync_queue_dao.dart';
+import 'package:offs/core/database/database.dart';
 import 'package:offs/core/errors/failures.dart';
 import 'package:offs/core/network/network_info.dart';
 import 'package:offs/features/inventory/data/datasources/inventory_local_datasource.dart';
@@ -13,11 +18,13 @@ class InventoryRepositoryImpl implements InventoryRepository {
   final InventoryLocalDataSource _localDataSource;
   final InventoryRemoteDataSource _remoteDataSource;
   final NetworkInfo _networkInfo;
+  final SyncQueueDao _syncQueueDao;
 
   InventoryRepositoryImpl(
     this._localDataSource,
     this._remoteDataSource,
     this._networkInfo,
+    this._syncQueueDao,
   );
 
   @override
@@ -102,9 +109,7 @@ class InventoryRepositoryImpl implements InventoryRepository {
         await _localDataSource.updateInventoryItem(updatedItem);
         return Right(updatedItem);
       } catch (e) {
-        // If remote fails, we should queue the update (not implemented yet) or fail
-        // For now, let's update local and return success (optimistic update)
-        // But we need the item first
+        // If remote fails, try local and queue
         try {
           final item = await _localDataSource.getInventoryItem(id);
           if (item != null) {
@@ -117,6 +122,18 @@ class InventoryRepositoryImpl implements InventoryRepository {
               lastUpdated: DateTime.now(),
             );
             await _localDataSource.updateInventoryItem(updatedModel);
+
+            await _syncQueueDao.addToQueue(
+              SyncQueueCompanion(
+                operation: const Value('update'),
+                entityType: const Value('inventory'),
+                entityId: Value(updatedModel.id),
+                payload: Value(jsonEncode(updatedModel.toJson())),
+                createdAt: Value(DateTime.now()),
+                status: const Value('pending'),
+              ),
+            );
+
             return Right(updatedModel);
           } else {
             return Left(CacheFailure('Item not found'));
@@ -138,7 +155,18 @@ class InventoryRepositoryImpl implements InventoryRepository {
             lastUpdated: DateTime.now(),
           );
           await _localDataSource.updateInventoryItem(updatedModel);
-          // TODO: Queue sync
+
+          await _syncQueueDao.addToQueue(
+            SyncQueueCompanion(
+              operation: const Value('update'),
+              entityType: const Value('inventory'),
+              entityId: Value(updatedModel.id),
+              payload: Value(jsonEncode(updatedModel.toJson())),
+              createdAt: Value(DateTime.now()),
+              status: const Value('pending'),
+            ),
+          );
+
           return Right(updatedModel);
         } else {
           return Left(CacheFailure('Item not found'));

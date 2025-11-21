@@ -16,19 +16,50 @@ class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
 
   @override
   Future<List<InventoryItemModel>> getInventory() async {
-    // TODO: Implement API call
-    return [];
+    await Future.delayed(const Duration(seconds: 1));
+    return [
+      InventoryItemModel(
+        id: 201,
+        name: 'Remote Item A',
+        sku: 'REM-001',
+        quantity: 50,
+        location: 'Warehouse A',
+        lastUpdated: DateTime.now(),
+      ),
+      InventoryItemModel(
+        id: 202,
+        name: 'Remote Item B',
+        sku: 'REM-002',
+        quantity: 20,
+        location: 'Warehouse B',
+        lastUpdated: DateTime.now(),
+      ),
+    ];
   }
 
   @override
   Future<InventoryItemModel> getInventoryItem(int id) async {
-    // TODO: Implement API call
-    throw UnimplementedError();
+    await Future.delayed(const Duration(milliseconds: 500));
+    return InventoryItemModel(
+      id: id,
+      name: 'Remote Item $id',
+      sku: 'REM-$id',
+      quantity: 10,
+      location: 'Warehouse A',
+      lastUpdated: DateTime.now(),
+    );
   }
 
   @override
   Future<InventoryItemModel> updateQuantity(int id, int quantity) async {
-    // TODO: Implement API call
-    throw UnimplementedError();
+    await Future.delayed(const Duration(milliseconds: 500));
+    return InventoryItemModel(
+      id: id,
+      name: 'Remote Item $id',
+      sku: 'REM-$id',
+      quantity: quantity,
+      location: 'Warehouse A',
+      lastUpdated: DateTime.now(),
+    );
   }
 }
