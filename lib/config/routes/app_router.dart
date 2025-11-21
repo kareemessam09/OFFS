@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:offs/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:offs/features/inventory/presentation/pages/inventory_page.dart';
 import 'package:offs/features/tasks/presentation/pages/task_list_page.dart';
 
 class AppRouter {
   static const String dashboard = '/';
   static const String tasks = '/tasks';
+  static const String inventory = '/inventory';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -12,6 +14,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const DashboardPage());
       case tasks:
         return MaterialPageRoute(builder: (_) => const TaskListPage());
+      case inventory:
+        return MaterialPageRoute(builder: (_) => const InventoryPage());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

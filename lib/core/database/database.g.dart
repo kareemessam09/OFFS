@@ -458,7 +458,7 @@ class TasksCompanion extends UpdateCompanion<TaskData> {
 }
 
 class $InventoryItemsTable extends InventoryItems
-    with TableInfo<$InventoryItemsTable, InventoryItem> {
+    with TableInfo<$InventoryItemsTable, InventoryItemData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -550,7 +550,7 @@ class $InventoryItemsTable extends InventoryItems
   static const String $name = 'inventory_items';
   @override
   VerificationContext validateIntegrity(
-    Insertable<InventoryItem> instance, {
+    Insertable<InventoryItemData> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
@@ -601,9 +601,9 @@ class $InventoryItemsTable extends InventoryItems
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  InventoryItem map(Map<String, dynamic> data, {String? tablePrefix}) {
+  InventoryItemData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return InventoryItem(
+    return InventoryItemData(
       id: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}id'],
@@ -637,14 +637,15 @@ class $InventoryItemsTable extends InventoryItems
   }
 }
 
-class InventoryItem extends DataClass implements Insertable<InventoryItem> {
+class InventoryItemData extends DataClass
+    implements Insertable<InventoryItemData> {
   final int id;
   final String name;
   final String sku;
   final int quantity;
   final String? location;
   final DateTime lastUpdated;
-  const InventoryItem({
+  const InventoryItemData({
     required this.id,
     required this.name,
     required this.sku,
@@ -679,12 +680,12 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
     );
   }
 
-  factory InventoryItem.fromJson(
+  factory InventoryItemData.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return InventoryItem(
+    return InventoryItemData(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       sku: serializer.fromJson<String>(json['sku']),
@@ -706,14 +707,14 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
     };
   }
 
-  InventoryItem copyWith({
+  InventoryItemData copyWith({
     int? id,
     String? name,
     String? sku,
     int? quantity,
     Value<String?> location = const Value.absent(),
     DateTime? lastUpdated,
-  }) => InventoryItem(
+  }) => InventoryItemData(
     id: id ?? this.id,
     name: name ?? this.name,
     sku: sku ?? this.sku,
@@ -721,8 +722,8 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
     location: location.present ? location.value : this.location,
     lastUpdated: lastUpdated ?? this.lastUpdated,
   );
-  InventoryItem copyWithCompanion(InventoryItemsCompanion data) {
-    return InventoryItem(
+  InventoryItemData copyWithCompanion(InventoryItemsCompanion data) {
+    return InventoryItemData(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
       sku: data.sku.present ? data.sku.value : this.sku,
@@ -736,7 +737,7 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
 
   @override
   String toString() {
-    return (StringBuffer('InventoryItem(')
+    return (StringBuffer('InventoryItemData(')
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('sku: $sku, ')
@@ -753,7 +754,7 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is InventoryItem &&
+      (other is InventoryItemData &&
           other.id == this.id &&
           other.name == this.name &&
           other.sku == this.sku &&
@@ -762,7 +763,7 @@ class InventoryItem extends DataClass implements Insertable<InventoryItem> {
           other.lastUpdated == this.lastUpdated);
 }
 
-class InventoryItemsCompanion extends UpdateCompanion<InventoryItem> {
+class InventoryItemsCompanion extends UpdateCompanion<InventoryItemData> {
   final Value<int> id;
   final Value<String> name;
   final Value<String> sku;
@@ -786,7 +787,7 @@ class InventoryItemsCompanion extends UpdateCompanion<InventoryItem> {
     this.lastUpdated = const Value.absent(),
   }) : name = Value(name),
        sku = Value(sku);
-  static Insertable<InventoryItem> custom({
+  static Insertable<InventoryItemData> custom({
     Expression<int>? id,
     Expression<String>? name,
     Expression<String>? sku,
@@ -1716,6 +1717,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $AttachmentsTable attachments = $AttachmentsTable(this);
   late final TasksDao tasksDao = TasksDao(this as AppDatabase);
   late final SyncQueueDao syncQueueDao = SyncQueueDao(this as AppDatabase);
+  late final InventoryDao inventoryDao = InventoryDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2089,17 +2091,21 @@ class $$InventoryItemsTableTableManager
         RootTableManager<
           _$AppDatabase,
           $InventoryItemsTable,
-          InventoryItem,
+          InventoryItemData,
           $$InventoryItemsTableFilterComposer,
           $$InventoryItemsTableOrderingComposer,
           $$InventoryItemsTableAnnotationComposer,
           $$InventoryItemsTableCreateCompanionBuilder,
           $$InventoryItemsTableUpdateCompanionBuilder,
           (
-            InventoryItem,
-            BaseReferences<_$AppDatabase, $InventoryItemsTable, InventoryItem>,
+            InventoryItemData,
+            BaseReferences<
+              _$AppDatabase,
+              $InventoryItemsTable,
+              InventoryItemData
+            >,
           ),
-          InventoryItem,
+          InventoryItemData,
           PrefetchHooks Function()
         > {
   $$InventoryItemsTableTableManager(
@@ -2159,17 +2165,17 @@ typedef $$InventoryItemsTableProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
       $InventoryItemsTable,
-      InventoryItem,
+      InventoryItemData,
       $$InventoryItemsTableFilterComposer,
       $$InventoryItemsTableOrderingComposer,
       $$InventoryItemsTableAnnotationComposer,
       $$InventoryItemsTableCreateCompanionBuilder,
       $$InventoryItemsTableUpdateCompanionBuilder,
       (
-        InventoryItem,
-        BaseReferences<_$AppDatabase, $InventoryItemsTable, InventoryItem>,
+        InventoryItemData,
+        BaseReferences<_$AppDatabase, $InventoryItemsTable, InventoryItemData>,
       ),
-      InventoryItem,
+      InventoryItemData,
       PrefetchHooks Function()
     >;
 typedef $$SyncQueueTableCreateCompanionBuilder =

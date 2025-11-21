@@ -20,6 +20,13 @@ class DashboardPage extends StatelessWidget {
               },
               child: const Text('Go to Tasks'),
             ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, AppRouter.inventory);
+              },
+              child: const Text('Go to Inventory'),
+            ),
           ],
         ),
       ),

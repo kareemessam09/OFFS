@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:offs/core/database/database.dart';
@@ -9,4 +10,7 @@ abstract class RegisterModule {
 
   @lazySingleton
   Dio get dio => Dio();
+
+  @lazySingleton
+  Connectivity get connectivity => Connectivity();
 }
