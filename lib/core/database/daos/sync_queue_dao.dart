@@ -24,4 +24,13 @@ class SyncQueueDao extends DatabaseAccessor<AppDatabase>
 
   Future<void> deleteSyncItem(int id) =>
       (delete(syncQueue)..where((t) => t.id.equals(id))).go();
+
+  Stream<List<SyncQueueData>> watchPendingSyncItems() => (select(
+    syncQueue,
+  )..where((t) => t.status.isIn(['pending', 'conflict']))).watch();
+
+  Stream<int> watchPendingItemsCount() =>
+      (select(syncQueue)..where((t) => t.status.equals('pending'))).watch().map(
+        (rows) => rows.length,
+      );
 }

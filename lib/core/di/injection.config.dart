@@ -30,6 +30,7 @@ import '../../features/inventory/domain/usecases/search_inventory.dart'
 import '../../features/inventory/domain/usecases/update_quantity.dart' as _i242;
 import '../../features/inventory/presentation/bloc/inventory_bloc.dart'
     as _i690;
+import '../../features/sync/presentation/bloc/sync_status_bloc.dart' as _i266;
 import '../../features/tasks/data/datasources/task_local_datasource.dart'
     as _i123;
 import '../../features/tasks/data/datasources/task_remote_datasource.dart'
@@ -47,6 +48,7 @@ import '../database/daos/sync_queue_dao.dart' as _i428;
 import '../database/daos/tasks_dao.dart' as _i897;
 import '../database/database.dart' as _i660;
 import '../network/network_info.dart' as _i932;
+import '../services/sync_service.dart' as _i979;
 import 'register_module.dart' as _i291;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -78,6 +80,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i773.InventoryDao>(
       () => _i773.InventoryDao(gh<_i660.AppDatabase>()),
     );
+    gh.lazySingleton<_i979.SyncService>(
+      () => _i979.SyncService(
+        gh<_i428.SyncQueueDao>(),
+        gh<_i25.TaskRemoteDataSource>(),
+        gh<_i103.InventoryRemoteDataSource>(),
+        gh<_i932.NetworkInfo>(),
+      ),
+    );
     gh.lazySingleton<_i716.InventoryLocalDataSource>(
       () => _i716.InventoryLocalDataSourceImpl(gh<_i773.InventoryDao>()),
     );
@@ -96,6 +106,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i103.InventoryRemoteDataSource>(),
         gh<_i932.NetworkInfo>(),
         gh<_i428.SyncQueueDao>(),
+      ),
+    );
+    gh.factory<_i266.SyncStatusBloc>(
+      () => _i266.SyncStatusBloc(
+        gh<_i428.SyncQueueDao>(),
+        gh<_i979.SyncService>(),
       ),
     );
     gh.lazySingleton<_i840.DeleteTask>(

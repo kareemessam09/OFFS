@@ -71,6 +71,9 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
   @override
   Future<TaskModel> updateTask(TaskModel task) async {
     await Future.delayed(const Duration(milliseconds: 500));
+    if (task.title.contains('Conflict')) {
+      throw Exception('Conflict: Server has newer version');
+    }
     return task;
   }
 

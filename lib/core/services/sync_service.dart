@@ -36,6 +36,9 @@ class SyncService {
         await _processItem(item);
         await _syncQueueDao.updateSyncStatus(item.id, 'completed');
       } catch (e) {
+        if (e.toString().contains('Conflict')) {
+          await _syncQueueDao.updateSyncStatus(item.id, 'conflict');
+        }
         // Log error or increment retry count
         debugPrint('Error syncing item ${item.id}: $e');
       }
