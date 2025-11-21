@@ -7,19 +7,23 @@ part 'inventory_dao.g.dart';
 
 @lazySingleton
 @DriftAccessor(tables: [InventoryItems])
-class InventoryDao extends DatabaseAccessor<AppDatabase> with _$InventoryDaoMixin {
+class InventoryDao extends DatabaseAccessor<AppDatabase>
+    with _$InventoryDaoMixin {
   InventoryDao(super.db);
 
-  Future<List<InventoryItemData>> getAllInventory() => select(inventoryItems).get();
+  Future<List<InventoryItemData>> getAllInventory() =>
+      select(inventoryItems).get();
 
   Future<InventoryItemData> getInventoryById(int id) =>
       (select(inventoryItems)..where((t) => t.id.equals(id))).getSingle();
 
-  Future<InventoryItemData?> getInventoryBySku(String sku) =>
-      (select(inventoryItems)..where((t) => t.sku.equals(sku))).getSingleOrNull();
+  Future<InventoryItemData?> getInventoryBySku(String sku) => (select(
+    inventoryItems,
+  )..where((t) => t.sku.equals(sku))).getSingleOrNull();
 
-  Future<List<InventoryItemData>> searchInventory(String query) =>
-      (select(inventoryItems)..where((t) => t.name.contains(query) | t.sku.contains(query))).get();
+  Future<List<InventoryItemData>> searchInventory(String query) => (select(
+    inventoryItems,
+  )..where((t) => t.name.contains(query) | t.sku.contains(query))).get();
 
   Future<int> insertInventoryItem(InventoryItemsCompanion item) =>
       into(inventoryItems).insert(item);

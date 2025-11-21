@@ -47,7 +47,23 @@ class InventoryRepositoryImpl implements InventoryRepository {
   }
 
   @override
-  Future<Either<Failure, InventoryItem>> getInventoryItemBySku(String sku) async {
+  Future<Either<Failure, InventoryItem>> getInventoryItem(int id) async {
+    try {
+      final localItem = await _localDataSource.getInventoryItem(id);
+      if (localItem != null) {
+        return Right(localItem);
+      } else {
+        return Left(CacheFailure('Item not found in cache'));
+      }
+    } catch (e) {
+      return Left(CacheFailure('Failed to load item from cache'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, InventoryItem>> getInventoryItemBySku(
+    String sku,
+  ) async {
     try {
       final localItem = await _localDataSource.getInventoryItemBySku(sku);
       if (localItem != null) {
@@ -61,7 +77,9 @@ class InventoryRepositoryImpl implements InventoryRepository {
   }
 
   @override
-  Future<Either<Failure, List<InventoryItem>>> searchInventory(String query) async {
+  Future<Either<Failure, List<InventoryItem>>> searchInventory(
+    String query,
+  ) async {
     try {
       final localInventory = await _localDataSource.searchInventory(query);
       return Right(localInventory);
@@ -71,10 +89,16 @@ class InventoryRepositoryImpl implements InventoryRepository {
   }
 
   @override
-  Future<Either<Failure, InventoryItem>> updateQuantity(int id, int quantity) async {
+  Future<Either<Failure, InventoryItem>> updateQuantity(
+    int id,
+    int quantity,
+  ) async {
     if (await _networkInfo.isConnected) {
       try {
-        final updatedItem = await _remoteDataSource.updateQuantity(id, quantity);
+        final updatedItem = await _remoteDataSource.updateQuantity(
+          id,
+          quantity,
+        );
         await _localDataSource.updateInventoryItem(updatedItem);
         return Right(updatedItem);
       } catch (e) {
@@ -84,16 +108,16 @@ class InventoryRepositoryImpl implements InventoryRepository {
         try {
           final item = await _localDataSource.getInventoryItem(id);
           if (item != null) {
-             final updatedModel = InventoryItemModel(
-               id: item.id,
-               name: item.name,
-               sku: item.sku,
-               quantity: quantity,
-               location: item.location,
-               lastUpdated: DateTime.now(),
-             );
-             await _localDataSource.updateInventoryItem(updatedModel);
-             return Right(updatedModel);
+            final updatedModel = InventoryItemModel(
+              id: item.id,
+              name: item.name,
+              sku: item.sku,
+              quantity: quantity,
+              location: item.location,
+              lastUpdated: DateTime.now(),
+            );
+            await _localDataSource.updateInventoryItem(updatedModel);
+            return Right(updatedModel);
           } else {
             return Left(CacheFailure('Item not found'));
           }
@@ -102,26 +126,26 @@ class InventoryRepositoryImpl implements InventoryRepository {
         }
       }
     } else {
-       try {
-          final item = await _localDataSource.getInventoryItem(id);
-          if (item != null) {
-             final updatedModel = InventoryItemModel(
-               id: item.id,
-               name: item.name,
-               sku: item.sku,
-               quantity: quantity,
-               location: item.location,
-               lastUpdated: DateTime.now(),
-             );
-             await _localDataSource.updateInventoryItem(updatedModel);
-             // TODO: Queue sync
-             return Right(updatedModel);
-          } else {
-            return Left(CacheFailure('Item not found'));
-          }
-        } catch (e) {
-          return Left(CacheFailure('Failed to update item'));
+      try {
+        final item = await _localDataSource.getInventoryItem(id);
+        if (item != null) {
+          final updatedModel = InventoryItemModel(
+            id: item.id,
+            name: item.name,
+            sku: item.sku,
+            quantity: quantity,
+            location: item.location,
+            lastUpdated: DateTime.now(),
+          );
+          await _localDataSource.updateInventoryItem(updatedModel);
+          // TODO: Queue sync
+          return Right(updatedModel);
+        } else {
+          return Left(CacheFailure('Item not found'));
         }
+      } catch (e) {
+        return Left(CacheFailure('Failed to update item'));
+      }
     }
   }
 }

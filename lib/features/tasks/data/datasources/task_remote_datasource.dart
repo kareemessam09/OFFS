@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
-import 'package:offs/core/errors/exceptions.dart';
 import 'package:offs/features/tasks/data/models/task_model.dart';
 
 abstract class TaskRemoteDataSource {

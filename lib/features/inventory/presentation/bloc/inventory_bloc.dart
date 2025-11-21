@@ -15,11 +15,8 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   final SearchInventory _searchInventory;
   final UpdateQuantity _updateQuantity;
 
-  InventoryBloc(
-    this._getInventory,
-    this._searchInventory,
-    this._updateQuantity,
-  ) : super(const InventoryState()) {
+  InventoryBloc(this._getInventory, this._searchInventory, this._updateQuantity)
+    : super(const InventoryState()) {
     on<LoadInventory>(_onLoadInventory);
     on<SearchInventoryEvent>(_onSearchInventory);
     on<UpdateInventoryQuantity>(_onUpdateQuantity);
@@ -32,14 +29,14 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
     emit(state.copyWith(status: InventoryStatus.loading));
     final result = await _getInventory();
     result.fold(
-      (failure) => emit(state.copyWith(
-        status: InventoryStatus.failure,
-        errorMessage: failure.message,
-      )),
-      (items) => emit(state.copyWith(
-        status: InventoryStatus.success,
-        items: items,
-      )),
+      (failure) => emit(
+        state.copyWith(
+          status: InventoryStatus.failure,
+          errorMessage: failure.message,
+        ),
+      ),
+      (items) =>
+          emit(state.copyWith(status: InventoryStatus.success, items: items)),
     );
   }
 
@@ -50,14 +47,14 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
     emit(state.copyWith(status: InventoryStatus.loading));
     final result = await _searchInventory(event.query);
     result.fold(
-      (failure) => emit(state.copyWith(
-        status: InventoryStatus.failure,
-        errorMessage: failure.message,
-      )),
-      (items) => emit(state.copyWith(
-        status: InventoryStatus.success,
-        items: items,
-      )),
+      (failure) => emit(
+        state.copyWith(
+          status: InventoryStatus.failure,
+          errorMessage: failure.message,
+        ),
+      ),
+      (items) =>
+          emit(state.copyWith(status: InventoryStatus.success, items: items)),
     );
   }
 
@@ -66,11 +63,9 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
     Emitter<InventoryState> emit,
   ) async {
     final result = await _updateQuantity(event.id, event.quantity);
-    
+
     result.fold(
-      (failure) => emit(state.copyWith(
-        errorMessage: failure.message,
-      )),
+      (failure) => emit(state.copyWith(errorMessage: failure.message)),
       (updatedItem) {
         final updatedItems = state.items.map((item) {
           return item.id == updatedItem.id ? updatedItem : item;

@@ -43,7 +43,9 @@ class InventoryView extends StatelessWidget {
           if (state.status == InventoryStatus.loading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state.status == InventoryStatus.failure) {
-            return Center(child: Text(state.errorMessage ?? 'Error loading inventory'));
+            return Center(
+              child: Text(state.errorMessage ?? 'Error loading inventory'),
+            );
           } else if (state.status == InventoryStatus.success) {
             if (state.items.isEmpty) {
               return const Center(child: Text('No inventory items found'));
@@ -81,8 +83,8 @@ class InventoryItemTile extends StatelessWidget {
             onPressed: () {
               if (item.quantity > 0) {
                 context.read<InventoryBloc>().add(
-                      UpdateInventoryQuantity(item.id, item.quantity - 1),
-                    );
+                  UpdateInventoryQuantity(item.id, item.quantity - 1),
+                );
               }
             },
           ),
@@ -94,8 +96,8 @@ class InventoryItemTile extends StatelessWidget {
             icon: const Icon(Icons.add),
             onPressed: () {
               context.read<InventoryBloc>().add(
-                    UpdateInventoryQuantity(item.id, item.quantity + 1),
-                  );
+                UpdateInventoryQuantity(item.id, item.quantity + 1),
+              );
             },
           ),
         ],
@@ -150,7 +152,7 @@ class InventorySearchDelegate extends SearchDelegate {
               },
             );
           } else if (state.status == InventoryStatus.failure) {
-             return Center(child: Text(state.errorMessage ?? 'Error'));
+            return Center(child: Text(state.errorMessage ?? 'Error'));
           }
           return const SizedBox.shrink();
         },

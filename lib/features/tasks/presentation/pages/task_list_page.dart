@@ -38,7 +38,9 @@ class TaskListPage extends StatelessWidget {
                         ),
                       ).then((_) {
                         // Refresh list when coming back
-                        context.read<TaskBloc>().add(LoadTasks());
+                        if (context.mounted) {
+                          context.read<TaskBloc>().add(LoadTasks());
+                        }
                       });
                     },
                     onStatusChanged: (value) {
@@ -77,7 +79,9 @@ class TaskListPage extends StatelessWidget {
                   context,
                   MaterialPageRoute(builder: (_) => const TaskDetailPage()),
                 ).then((_) {
-                  context.read<TaskBloc>().add(LoadTasks());
+                  if (context.mounted) {
+                    context.read<TaskBloc>().add(LoadTasks());
+                  }
                 });
               },
               child: const Icon(Icons.add),
