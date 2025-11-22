@@ -29,28 +29,37 @@ class InventoryRepositoryImpl implements InventoryRepository {
 
   @override
   Future<Either<Failure, List<InventoryItem>>> getInventory() async {
+    try {
+      final localInventory = await _localDataSource.getInventory();
+
+      if (localInventory.isNotEmpty) {
+        () async {
+          if (await _networkInfo.isConnected) {
+            try {
+              final remoteInventory = await _remoteDataSource.getInventory();
+              await _localDataSource.cacheInventory(remoteInventory);
+            } catch (_) {}
+          }
+        }();
+
+        return Right(localInventory);
+      }
+    } catch (_) {
+      // Fall through to attempt remote fetch if cache read fails or is empty.
+    }
+
+    // If we reach here either local cache was empty/unreadable or not present.
     if (await _networkInfo.isConnected) {
       try {
         final remoteInventory = await _remoteDataSource.getInventory();
         await _localDataSource.cacheInventory(remoteInventory);
         return Right(remoteInventory);
       } catch (e) {
-        // If remote fails, try local
-        try {
-          final localInventory = await _localDataSource.getInventory();
-          return Right(localInventory);
-        } catch (e) {
-          return Left(CacheFailure('Failed to load inventory from cache'));
-        }
-      }
-    } else {
-      try {
-        final localInventory = await _localDataSource.getInventory();
-        return Right(localInventory);
-      } catch (e) {
-        return Left(CacheFailure('Failed to load inventory from cache'));
+        return Left(CacheFailure('Failed to load inventory from remote'));
       }
     }
+
+    return Left(CacheFailure('Failed to load inventory from cache'));
   }
 
   @override

@@ -21,46 +21,85 @@ class TaskCard extends StatelessWidget {
     final dateFormat = DateFormat('MMM d, y');
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: ListTile(
+      margin: EdgeInsets.zero, // Handled by ListView.separated
+      child: InkWell(
         onTap: onTap,
-        leading: Checkbox(value: isCompleted, onChanged: onStatusChanged),
-        title: Text(
-          task.title,
-          style: TextStyle(
-            decoration: isCompleted ? TextDecoration.lineThrough : null,
-          ),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (task.description != null && task.description!.isNotEmpty)
-              Text(
-                task.description!,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Transform.scale(
+                scale: 1.2,
+                child: Checkbox(
+                  value: isCompleted,
+                  onChanged: onStatusChanged,
+                  shape: const CircleBorder(),
+                  activeColor: Theme.of(context).colorScheme.primary,
+                ),
               ),
-            if (task.dueDate != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Row(
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(
-                      Icons.calendar_today,
-                      size: 14,
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(width: 4),
                     Text(
-                      dateFormat.format(task.dueDate!),
-                      style: Theme.of(context).textTheme.bodySmall,
+                      task.title,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        decoration: isCompleted
+                            ? TextDecoration.lineThrough
+                            : null,
+                        color: isCompleted
+                            ? Theme.of(context).colorScheme.onSurfaceVariant
+                            : Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    if (task.description != null &&
+                        task.description!.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        task.description!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        if (task.dueDate != null) ...[
+                          Icon(
+                            Icons.calendar_today,
+                            size: 14,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            dateFormat.format(task.dueDate!),
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
+                          ),
+                          const SizedBox(width: 12),
+                        ],
+                        _buildStatusChip(context),
+                      ],
                     ),
                   ],
                 ),
               ),
-          ],
+            ],
+          ),
         ),
-        trailing: _buildStatusChip(context),
       ),
     );
   }
@@ -83,18 +122,17 @@ class TaskCard extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
         task.status.toShortString(),
         style: TextStyle(
           color: color,
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );

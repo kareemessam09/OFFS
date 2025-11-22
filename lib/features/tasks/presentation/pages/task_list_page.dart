@@ -22,10 +22,41 @@ class TaskListPage extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             } else if (state is TaskLoaded) {
               if (state.tasks.isEmpty) {
-                return const Center(child: Text('No tasks found'));
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.check_circle_outline,
+                        size: 64,
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No tasks found',
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Tap + to create one',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
               }
-              return ListView.builder(
+              return ListView.separated(
+                padding: const EdgeInsets.all(16),
                 itemCount: state.tasks.length,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 12),
                 itemBuilder: (context, index) {
                   final task = state.tasks[index];
                   return TaskCard(
@@ -66,7 +97,27 @@ class TaskListPage extends StatelessWidget {
                 },
               );
             } else if (state is TaskError) {
-              return Center(child: Text('Error: ${state.message}'));
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: Colors.red,
+                    ),
+                    const SizedBox(height: 16),
+                    Text('Error: ${state.message}'),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<TaskBloc>().add(LoadTasks());
+                      },
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              );
             }
             return const SizedBox.shrink();
           },
