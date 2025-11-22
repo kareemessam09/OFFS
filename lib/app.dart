@@ -8,6 +8,7 @@ class OffsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Offs',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
